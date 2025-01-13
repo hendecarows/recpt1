@@ -413,13 +413,11 @@ tune(char *channel, thread_data *tdata, char *device)
             if(ioctl(tdata->tfd, PTX_SET_SYSTEM_MODE, system) < 0) {
                 fprintf(stderr, "Set ISDB-S Mode failed: %s\n", device);
             }
-            fprintf(stderr, "set ISDB-S mode\n");
         } else if (tdata->table->type == CHTYPE_GROUND) {
             system = PTX_ISDB_T_SYSTEM;
             if(ioctl(tdata->tfd, PTX_SET_SYSTEM_MODE, system) < 0) {
                 fprintf(stderr, "Set ISDB-T Mode failed: %s\n", device);
             }
-            fprintf(stderr, "set ISDB-T mode\n");
         }
 
         /* tune to specified channel */
@@ -463,6 +461,19 @@ tune(char *channel, thread_data *tdata, char *device)
                     }
                 }
 
+                /* set system mode */
+                if(tdata->table->type == CHTYPE_SATELLITE) {
+                    system = PTX_ISDB_S_SYSTEM;
+                    if(ioctl(tdata->tfd, PTX_SET_SYSTEM_MODE, system) < 0) {
+                        fprintf(stderr, "Set ISDB-S Mode failed: %s\n", tuner[lp]);
+                    }
+                } else if (tdata->table->type == CHTYPE_GROUND) {
+                    system = PTX_ISDB_T_SYSTEM;
+                    if(ioctl(tdata->tfd, PTX_SET_SYSTEM_MODE, system) < 0) {
+                        fprintf(stderr, "Set ISDB-T Mode failed: %s\n", tuner[lp]);
+                    }
+                }
+
                 /* tune to specified channel */
                 if(tdata->tune_persistent) {
                     while(ioctl(tdata->tfd, PTX_SET_CHANNEL, &freq) < 0 &&
@@ -489,8 +500,7 @@ tune(char *channel, thread_data *tdata, char *device)
                     }
                 }
 
-                if(tdata->tune_persistent)
-                    fprintf(stderr, "device = %s\n", tuner[lp]);
+                fprintf(stderr, "device = %s\n", tuner[lp]);
                 break; /* found suitable tuner */
             }
         }
