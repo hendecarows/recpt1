@@ -16,7 +16,14 @@ TSIDによる選局対応は[recpt1(otya128)][link_otya128]、libdvbv5形式へ�
 * libdvbv5形式のISDB-Sチャンネルファイルに対応し、dvbv5-zapと共通化する
 * BS放送におけるトランスポンダー移動やTSID変更時の対応を一本化する
 
-libdvbv5形式のISDB-Sチャンネルファイルを使用する場合は、TSIDによる選局となるため、ドライバ側の対応が必要です。動作確認は[px4_drv(tsukumijima)][link_px4drv]のみで、PT1,PT2,[PT3][link_pt3drv]のchardevドライバには対応していません。
+libdvbv5形式のISDB-Sチャンネルファイルを使用する場合は、TSIDによる選局となるため、ドライバ側の対応が必要です。
+動作確認は[px4_drv(tsukumijima)][link_px4drv]のみで、PT1,PT2,[PT3][link_pt3drv]のchardevドライバには対応していません。
+また、libdvbv5形式のISDB-Sチャンネルファイルはrecpt1をコマンドラインからの起動した場合にのみ有効です。
+httpサーバーやrecpt1ctlでは使用できません。
+
+```console
+recpt1 --device /dev/pxm1urvideo0 --dvbv5 /usr/local/etc/dvbv5/dvbv5_channels_isdbs.conf BS01_0 10 a.ts
+```
 
 -----
 
