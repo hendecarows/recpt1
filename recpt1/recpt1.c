@@ -35,6 +35,7 @@
 #include "mkpath.h"
 
 #include "tssplitter_lite.h"
+#include "channeldvbv5.h"
 
 /* maximum write length at once */
 #define SIZE_CHANK 1316
@@ -503,9 +504,9 @@ void
 show_usage(char *cmd)
 {
 #ifdef HAVE_LIBARIB25
-    fprintf(stderr, "Usage: \n%s [--b25 [--round N] [--strip] [--EMM]] [--udp [--addr hostname --port portnumber]] [--http portnumber] [--device devicefile] [--lnb voltage] [--sid SID1,SID2] channel rectime destfile\n", cmd);
+    fprintf(stderr, "Usage: \n%s [--b25 [--round N] [--strip] [--EMM]] [--udp [--addr hostname --port portnumber]] [--http portnumber] [--device devicefile] [--lnb voltage] [--sid SID1,SID2] [--dvbv5 channelfile] channel rectime destfile\n", cmd);
 #else
-    fprintf(stderr, "Usage: \n%s [--strip] [--EMM]] [--udp [--addr hostname --port portnumber]] [--device devicefile] [--lnb voltage] [--sid SID1,SID2] channel rectime destfile\n", cmd);
+    fprintf(stderr, "Usage: \n%s [--strip] [--EMM]] [--udp [--addr hostname --port portnumber]] [--device devicefile] [--lnb voltage] [--sid SID1,SID2] [--dvbv5 channelfile] channel rectime destfile\n", cmd);
 #endif
     fprintf(stderr, "\n");
     fprintf(stderr, "Remarks:\n");
@@ -533,6 +534,7 @@ show_options(void)
     fprintf(stderr, "--help:              Show this help\n");
     fprintf(stderr, "--version:           Show version\n");
     fprintf(stderr, "--list:              Show channel list\n");
+    fprintf(stderr, "--dvbv5:             Specify dvbv5 channel file to use\n");
 }
 
 void
@@ -649,6 +651,7 @@ main(int argc, char **argv)
         { "version",   0, NULL, 'v'},
         { "list",      0, NULL, 'l'},
         { "sid",       1, NULL, 'i'},
+        { "dvbv5",     1, NULL, '5'},
         {0, 0, NULL, 0} /* terminate */
     };
 
@@ -669,8 +672,10 @@ main(int argc, char **argv)
     int connected_socket = 0, listening_socket = 0;
     unsigned int len;
     char *channel = NULL;
+    char *dvbv5_config = NULL;
+    char recpt1_channel[10];
 
-    while((result = getopt_long(argc, argv, "br:smn:ua:H:p:d:hvli:",
+    while((result = getopt_long(argc, argv, "br:smn:ua:H:p:d:hvli:5:",
                                 long_options, &option_index)) != -1) {
         switch(result) {
         case 'b':
@@ -751,6 +756,9 @@ main(int argc, char **argv)
             use_splitter = TRUE;
             sid_list = optarg;
             break;
+        case '5':
+            dvbv5_config = optarg;
+            break;
         }
     }
 
@@ -808,15 +816,26 @@ main(int argc, char **argv)
             }
             else {
                 fprintf(stderr, "Arguments are necessary!\n");
-                fprintf(stderr, "Try '%s --help' for more information.\n", argv[0]);
+                fprintf(stderr, "Try '%s --help' for more information.\n", argv[0]); 
                 return 1;
             }
         }
 
         fprintf(stderr, "pid = %d\n", getpid());
 
+        /* convert dvbv5 to recpt1 channel */
+        channel = argv[optind];
+        if (dvbv5_config) {
+            if (channel_dvbv5_to_recpt1(dvbv5_config, channel, recpt1_channel, sizeof(recpt1_channel)) < 0) {
+                fprintf(stderr, "failed to convert dvbv5 to recpt1 channel, try recpt1 channel: %s\n", channel);
+            } else {
+                fprintf(stderr, "convert dvbv5: %s to recpt1 channel: %s\n", channel, recpt1_channel);
+                channel = recpt1_channel;
+            }
+        }
+
         /* tune */
-        if(tune(argv[optind], &tdata, device) != 0)
+        if(tune(channel, &tdata, device) != 0)
             return 1;
 
         /* set recsec */

@@ -4,8 +4,19 @@
 
 * `driver/pt1_ioctl.h` からpx4_drvに付属の`ptx_ioctl.h`に変更
 * チャンネル変更時に`ioctl(PTX_SET_SYSTEM_MODE)`を実行
+* BS放送に対するTSID選局に対応
+* libdvbv5形式のISDB-Sチャンネルファイルに対応
 
-目的は、PX-M1URとpx4_drvでチャンネルC13-C24を使えるようにしたいということです。
+TSIDによる選局対応は[recpt1(otya128)][link_otya128]、libdvbv5形式への対応は[ini][link_inilib]で行いました。
+
+変更の目的は以下です。
+
+* [px4_drv(tsukumijima)][link_px4drv]でチャンネルC13-C24を使えるようにする
+* BSに対して相対TS番号`BSxx_y`による選局ではなくTSIDによる選局を可能にする
+* libdvbv5形式のISDB-Sチャンネルファイルに対応し、dvbv5-zapと共通化する
+* BS放送におけるトランスポンダー移動やTSID変更時の対応を一本化する
+
+libdvbv5形式のISDB-Sチャンネルファイルを使用する場合は、TSIDによる選局となるため、ドライバ側の対応が必要です。動作確認は[px4_drv(tsukumijima)][link_px4drv]のみで、PT1,PT2,[PT3][link_pt3drv]のchardevドライバには対応していません。
 
 -----
 
@@ -41,4 +52,8 @@ Special Thanks:
   Linux 5.15.0 SMP
 ```
 
+[link_px4drv]: https://github.com/tsukumijima/px4_drv
 [link_recpt1]: https://github.com/stz2012/recpt1
+[link_otya128]: https://github.com/otya128/recpt1
+[link_inilib]: https://github.com/ClecioJung/ini
+[link_pt3drv]: https://github.com/m-tsudo/pt3

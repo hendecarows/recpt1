@@ -268,7 +268,7 @@ ISDB_T_FREQ_CONV_TABLE    isdb_t_conv_table[] = {
     {   2, CHTYPE_SATELLITE, 0, "192"},  /* 192ch：WOWOWライブ */
     {   2, CHTYPE_SATELLITE, 1, "193"},  /* 193ch：WOWOWシネマ */
     {   4, CHTYPE_SATELLITE, 0, "211"},  /* 211ch：BS11イレブン */
-    {   4, CHTYPE_SATELLITE, 2, "222"},  /* 222ch：BS12トゥエルビ */
+    {   4, CHTYPE_SATELLITE, 1, "222"},  /* 222ch：BS12トゥエルビ */
     {   6, CHTYPE_SATELLITE, 2, "231"},  /* 231ch：放送大学ex */
     {   6, CHTYPE_SATELLITE, 2, "232"},  /* 232ch：放送大学on */
     {   6, CHTYPE_SATELLITE, 2, "531"},  /* 531ch：放送大学ラジオ */
@@ -287,7 +287,7 @@ ISDB_T_FREQ_CONV_TABLE    isdb_t_conv_table[] = {
     {  10, CHTYPE_SATELLITE, 2, "234"},  /* 234ch：グリーンチャンネル */
     {  11, CHTYPE_SATELLITE, 0, "256"},  /* 256ch：ディズニーch */
     {  11, CHTYPE_SATELLITE, 1, "265"},  /* 265ch：BSよしもと */
-    {  11, CHTYPE_SATELLITE, 3, "260"},  /* 260ch：BS松竹東急 */
+    {  11, CHTYPE_SATELLITE, 2, "260"},  /* 260ch：BS松竹東急 */
     {  12, CHTYPE_SATELLITE, 0, "CS2"},  /* ND2：
                                           * 296ch：TBSチャンネル1
                                           * 298ch：テレ朝チャンネル1

@@ -38,6 +38,41 @@ ISDB_T_FREQ_CONV_TABLE *
 searchrecoff(char *channel)
 {
     int lp;
+    long tsid = 0xffff;
+    long network_id;
+
+    if(channel[0] == '0' && channel[1] == 'x') {
+        char *end;
+        tsid = strtol(channel + 2, &end, 16);
+        if (end != channel + strlen(channel)) {
+            tsid = 0xffff;
+        }
+    } else if(isdigit(channel[0])) {
+        char *end;
+        tsid = strtol(channel, &end, 10);
+        if (end != channel + strlen(channel)) {
+            tsid = 0xffff;
+        }
+    }
+
+    network_id = tsid >> 12;
+    if(tsid != 0xffff && network_id == 4) {
+        /* BS */
+        long transponder = (tsid >> 4) & 0x1f;
+        if((transponder % 2) == 1 && transponder >= 1 && transponder <= 23) {
+            isdb_t_conv_set.set_freq = transponder / 2;
+            isdb_t_conv_set.add_freq = tsid;
+            return &isdb_t_conv_set;
+        }
+    } else if(tsid != 0xffff && (network_id == 6 || network_id == 7)) {
+        /* CS */
+        long transponder = (tsid >> 4) & 0x1f;
+        if((transponder % 2) == 0 && transponder >= 2 && transponder <= 26) {
+            isdb_t_conv_set.set_freq = transponder / 2 + 11;
+            isdb_t_conv_set.add_freq = tsid;
+            return &isdb_t_conv_set;
+        }
+    }
 
     if(channel[0] == 'B' && channel[1] == 'S') {
         int node = 0;
@@ -204,7 +239,7 @@ show_channels(void)
     fprintf(stderr, "BS05_0: WOWOWライブ\n");
     fprintf(stderr, "BS05_1: WOWOWシネマ\n");
     fprintf(stderr, "BS09_0: BS11イレブン\n");
-    fprintf(stderr, "BS09_2: BS12トゥエルビ\n");
+    fprintf(stderr, "BS09_1: BS12トゥエルビ\n");
     fprintf(stderr, "BS13_0: BS日テレ\n");
     fprintf(stderr, "BS13_1: BSフジ\n");
     fprintf(stderr, "BS13_2: 放送大学\n");
@@ -220,7 +255,7 @@ show_channels(void)
     fprintf(stderr, "BS21_2: グリーンチャンネル\n");
     fprintf(stderr, "BS23_0: ディズニーch\n");
     fprintf(stderr, "BS23_1: BSよしもと\n");
-    fprintf(stderr, "BS23_3: BS松竹東急\n");
+    fprintf(stderr, "BS23_2: BS松竹東急\n");
     fprintf(stderr, "C13-C63: CATV Channels\n");
     fprintf(stderr, "CS2-CS24: CS Channels\n");
 }
