@@ -250,6 +250,11 @@ char *isdb_t_dev[NUM_ISDB_T_DEV] = {
     "/dev/pxs1urvideo1",
     "/dev/pxs1urvideo2",
     "/dev/pxs1urvideo3",
+
+    "/dev/isdbt2071video0",
+    "/dev/isdbt2071video1",
+    "/dev/isdbt2071video2",
+    "/dev/isdbt2071video3",
 };
 
 // 変換テーブル(ISDB-T用)
